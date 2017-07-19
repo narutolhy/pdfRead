@@ -50,9 +50,12 @@
   <ItemGroup>
     <Compile Include="pdfObject\LZEDecode.cs" />
     <Compile Include="pdfObject\PdfBase.cs" />
+    <Compile Include="pdfObject\PdfConsts.cs" />
     <Compile Include="pdfObject\PdfDocument.cs" />
+    <Compile Include="pdfObject\PdfFunctions.cs" />
     <Compile Include="pdfObject\PdfObject.cs" />
     <Compile Include="pdfObject\PdfParser.cs" />
+    <Compile Include="pdfObject\PdfTextObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

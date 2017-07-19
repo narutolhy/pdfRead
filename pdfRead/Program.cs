@@ -9,7 +9,7 @@ using pdfRead.pdfObject;
 namespace pdfRead {
     class Program {
         static void Main(string[] args) {
-            string filePath = @"C:\Users\t-holu\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\data\effect\0010S000001nG81QAE.pdf";
+            string filePath = @"C:\Users\t-holu\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\data\effect\0010S000001nGJTQA2.pdf";
             byte[] pdfbytes = FileToByteArray(filePath);
             MemoryStream memoryStream = new MemoryStream(pdfbytes);
             BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8);
@@ -19,19 +19,20 @@ namespace pdfRead {
             Console.WriteLine(pdfbytes.Length);
             PdfDocument doc = new PdfDocument();
             doc.ReadPdfFile(pdfbytes);
-            int i = 0;
+            StringBuilder sb = new StringBuilder();
             var objarray = doc.ObjectArray;
-            foreach(var obj in doc.ObjectArray) {
-                if(obj.ObjectType == "/Page") {
-                    byte[] pageBytes = obj.PageContents;
-                    string result = System.Text.Encoding.UTF8.GetString(pageBytes);
-                    Console.WriteLine(result);
-                    Console.WriteLine("split");
-                }
+            //foreach(var obj in doc.ObjectArray) {
+            //    if(obj.ObjectType == "/Page") {
 
+            //        byte[] pageBytes = obj.PageContents;
+            //        string result = System.Text.Encoding.UTF8.GetString(pageBytes);
+            //        sb.Append(result + "\n");
+            //        sb.Append("split" + "\n");
+            //    }
 
-            }
-
+            //}
+            //File.WriteAllText("test.txt", sb.ToString());
+            var text = doc.PageTextData(0);
             //var obj = doc.ObjectArray[5];
             //byte[] pageBytes = obj.ObjectValue.StreamContents;
             //string result = System.Text.Encoding.UTF8.GetString(pageBytes);

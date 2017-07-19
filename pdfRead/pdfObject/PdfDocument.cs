@@ -50,6 +50,9 @@ namespace pdfRead.pdfObject {
         public String ResultFolderName;
         public Int32 XRefStreamPosition;
         public Byte[] ObjectAnalyis;
+        public PdfIndirectObject[] ContentsArray;
+        public List<PdfIndirectObject> PageObjectArray;
+        //public List<PdfIndirectObject> ImageObjectArray;
 
         private BinaryReader PdfFile;
         private PdfFileParser ParseFile;
@@ -62,6 +65,7 @@ namespace pdfRead.pdfObject {
 
         public PdfDocument() {
             ObjectArray = new List<PdfIndirectObject>();
+            PageObjectArray = new List<PdfIndirectObject>();
             return;
         }
 
@@ -166,6 +170,19 @@ namespace pdfRead.pdfObject {
                 // produce object analysis text file
                 //ObjectAnalysisTextFile();
                 // close file
+
+                foreach(var obj in ObjectArray) {
+                    if(obj.ObjectType == "/Page") {
+                        PageObjectArray.Add(obj);
+                    }
+                }
+
+                //foreach(var obj in ObjectArray) {
+                //    if(obj.ObjectSubtype == "/Image") {
+                //        ImageObjectArray.Add(obj);
+                //    }
+                //}
+
                 PdfFile.Close();
 
                 // successfule exit
@@ -182,7 +199,7 @@ namespace pdfRead.pdfObject {
                 //String[] ExceptionStack = ExceptionReport.GetMessageAndStack(this, Ex);
                 //MessageBox.Show(Form.ActiveForm, "PDF Document reading falied\n" + ExceptionStack[0] + "\n" + ExceptionStack[1],
                 //    "PDFDocument Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return (true);
+                //return (true);
             }
         }
 
@@ -866,6 +883,20 @@ namespace pdfRead.pdfObject {
 
             // not found
             return (null);
+        }
+
+        public List<PdfTextObject> PageTextData(int pageNum) {
+            List<PdfTextObject> textObjects = new List<PdfTextObject>();
+            PdfIndirectObject page = PageObjectArray[pageNum];
+            byte[] pageBytes = page.PageContents;
+            string result = System.Text.Encoding.UTF8.GetString(pageBytes);
+            int position = 0;
+            byte[] data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
+            while(data != null) {
+                textObjects.Add(new PdfTextObject(data));
+                data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
+            }
+            return textObjects;
         }
     }
 }
