@@ -55,6 +55,7 @@
     <Compile Include="pdfObject\PdfFunctions.cs" />
     <Compile Include="pdfObject\PdfObject.cs" />
     <Compile Include="pdfObject\PdfParser.cs" />
+    <Compile Include="pdfObject\PdfTextLine.cs" />
     <Compile Include="pdfObject\PdfTextObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -68,7 +68,7 @@ namespace pdfRead.pdfObject {
             var endIndex = beginIndex;
             var current = (char)inBytes[beginIndex];
             var value = "";
-            while(current != 10) {
+            while(current != 10 && endIndex > 0) {
                 endIndex--;
                 current = (char)inBytes[endIndex];
             }

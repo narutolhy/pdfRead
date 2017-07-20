@@ -10,11 +10,15 @@ namespace pdfRead.pdfObject {
     public class PdfTextObject {
         private static byte[] _ObjectBytes;
 
-        public static string FontName {
+        public string FontName {
             get; private set;
         }
 
-        public static int FontSize {
+        public double TextHeight {
+            get; private set;
+        }
+
+        public double FontSize {
             get; private set;
         }
 
@@ -22,15 +26,21 @@ namespace pdfRead.pdfObject {
 
         public PdfTextObject(byte[] inBytes) {
             _ObjectBytes = inBytes;
-            var str = PdfFunctions.ConvertByteToString(_ObjectBytes);
+            //var str = PdfFunctions.ConvertByteToString(_ObjectBytes);
             Parse();
         }
+
+
 
         private void Parse() {
             int position;
             var font = PdfFunctions.GetTextAttribute(_ObjectBytes, 0, PdfConsts.PDF_TEXT_FONT, out position);
             if(!String.IsNullOrEmpty(font))
                 FillTextParameters(font);
+            position = 0;
+            var height = PdfFunctions.GetTextAttribute(_ObjectBytes, 0, PdfConsts.PDF_TEXT_POSITION, out position);
+            if(!String.IsNullOrEmpty(height))
+                GetTextHeight(height);
             string text;
             position = 0;
             do {
@@ -87,13 +97,24 @@ namespace pdfRead.pdfObject {
             TextLines.Add(res);
         }
 
-        private static void FillTextParameters(string value) {
+        private void FillTextParameters(string value) {
             if(String.IsNullOrEmpty(value))
                 return;
             var startPos = value.IndexOf("/", StringComparison.Ordinal);
             var endPos = value.IndexOf(" ", StringComparison.Ordinal);
             FontName = value.Substring(startPos + 1, endPos - startPos);
-            FontSize = Convert.ToInt32(value.Substring(endPos + 1));
+            FontSize = Convert.ToDouble(value.Substring(endPos + 1));
+        }
+
+        private void GetTextHeight(string height) {
+            height = height.Trim();
+            if(String.IsNullOrEmpty(height))
+                return;
+            int index = height.LastIndexOf(' ');
+            if(index == -1)
+                return;
+            TextHeight = Convert.ToDouble(height.Substring(index + 1));
+            return;
         }
     }
 }
