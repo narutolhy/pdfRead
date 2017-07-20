@@ -87,6 +87,7 @@ namespace pdfRead.pdfObject {
         private void AddAssemblyText(string value) {
             var textValues = Regex.Matches(value, PdfConsts.MULTY_LINE_REGEX);
             var outValue = textValues.Cast<Match>().Aggregate("", (current, textValue) => current + Regex.Replace(textValue.Value, PdfConsts.LINE_REGEX, "$1"));
+            outValue = outValue.Replace("\\(", "(").Replace('\\', ')');
             if(!String.IsNullOrEmpty(outValue))
                 TextLines.Add(outValue);
         }

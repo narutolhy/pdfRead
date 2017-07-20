@@ -30,6 +30,8 @@ namespace pdfRead.pdfObject {
 
         public const string PDF_ART_BOX = "/ArtBox";
 
+        public const string PDF_BEGIN_Marked_Content = "BDC";
+
         public const string PDF_BEGIN_TEXT_BLOCK = "BT";
         
         public const string PDF_TEXT_FONT = "Tf";

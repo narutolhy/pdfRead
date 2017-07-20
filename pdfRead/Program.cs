@@ -33,7 +33,7 @@ namespace pdfRead {
             //}
             //File.WriteAllText("test.txt", sb.ToString());
 
-            var text = doc.PageTextData(1);
+            var text = doc.PageTextData(0);
             int lineN = 0;
             double height = 0;
             List<PdfTextLine> lines = new List<PdfTextLine>();
@@ -47,6 +47,8 @@ namespace pdfRead {
                         lines.Add(textLine);
                     }
                     textSb.Clear();
+                    foreach(var str in text[i].TextLines)
+                        textSb.Append(str);
                     lineN++;
                 } else {
                     foreach(var str in text[i].TextLines)
