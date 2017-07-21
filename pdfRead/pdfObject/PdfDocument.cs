@@ -889,14 +889,80 @@ namespace pdfRead.pdfObject {
             List<PdfTextObject> textObjects = new List<PdfTextObject>();
             PdfIndirectObject page = PageObjectArray[pageNum];
             byte[] pageBytes = page.PageContents;
-            string result = System.Text.Encoding.UTF8.GetString(pageBytes);
+            
             int position = 0;
+            string test = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
+            while(!String.IsNullOrEmpty(test.Trim())) {
+                Console.WriteLine(test);
+                test = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
+            }
+       
+            position = 0;
             byte[] data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
             while(data != null) {
                 textObjects.Add(new PdfTextObject(data));
                 data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
             }
             return textObjects;
+        }
+
+        public List<PdfTextLine> PageTextLine(int pageNum) {
+            List<PdfTextLine> LineObjects = new List<PdfTextLine>();
+            PdfIndirectObject page = PageObjectArray[pageNum];
+            byte[] pageBytes = page.PageContents;
+
+            List<KeyValuePair<int, bool>> bdcIndex = new List<KeyValuePair<int, bool>>();
+
+            int position = 0;
+            string bdcType = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
+            while(!String.IsNullOrEmpty(bdcType)) {
+                bdcIndex.Add(new KeyValuePair<int, bool>(position, bdcType.Contains(PdfConsts.PDF_ARC)));
+                bdcType = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
+            }
+            position = 0;
+            byte[] data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
+            StringBuilder textSb = new StringBuilder();
+            double height = 0;
+            int lineNum = 0;
+            for(int i = 1; i < bdcIndex.Count; i++) {
+                List<PdfTextObject> textObjects = new List<PdfTextObject>();
+                while(position < bdcIndex[i].Key && data != null) {
+                    textObjects.Add(new PdfTextObject(data));
+                    data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
+                }
+                if(!String.IsNullOrEmpty(textSb.ToString().Trim()) && textObjects.Count > 0 && height != textObjects[0].TextHeight) {
+                    PdfTextLine textLine = new PdfTextLine(textSb.ToString(), ++lineNum, false, bdcIndex[i - 1].Value, textObjects[0].FontSize, textObjects[0].FontName);
+                    LineObjects.Add(textLine);
+                    textSb.Clear();
+                }
+                for(int j = 0; j < textObjects.Count; j++) {                
+                    foreach(var str in textObjects[j].TextLines)
+                        textSb.Append(str);                  
+                }
+                if(textObjects.Count != 0)
+                    height = textObjects[textObjects.Count - 1].TextHeight;
+            }
+            List<PdfTextObject> lastObject = new List<PdfTextObject>();
+            while(data != null) {
+                lastObject.Add(new PdfTextObject(data));
+                data = PdfFunctions.GetTextBlock(pageBytes, position, out position);
+            }
+            if(!String.IsNullOrEmpty(textSb.ToString().Trim()) && lastObject.Count > 0 && height != lastObject[0].TextHeight) {
+                PdfTextLine textLine = new PdfTextLine(textSb.ToString(), ++lineNum, false, bdcIndex[bdcIndex.Count - 2].Value, lastObject[0].FontSize, lastObject[0].FontName);
+                LineObjects.Add(textLine);
+                textSb.Clear();
+            }
+            StringBuilder lastSb = new StringBuilder();
+            for(int j = 0; j < lastObject.Count; j++) {
+                foreach(var str in lastObject[j].TextLines)
+                    textSb.Append(str);
+            }
+            if(!String.IsNullOrEmpty(textSb.ToString().Trim())) {
+                PdfTextLine textLine = new PdfTextLine(textSb.ToString(), ++lineNum, false, bdcIndex[bdcIndex.Count - 1].Value, lastObject[lastObject.Count - 1].FontSize, lastObject[lastObject.Count - 1].FontName);
+                LineObjects.Add(textLine);
+            }
+
+            return LineObjects;
         }
     }
 }

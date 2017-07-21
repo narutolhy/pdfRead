@@ -33,40 +33,48 @@ namespace pdfRead {
             //}
             //File.WriteAllText("test.txt", sb.ToString());
 
-            var text = doc.PageTextData(0);
-            int lineN = 0;
-            double height = 0;
-            List<PdfTextLine> lines = new List<PdfTextLine>();
-            StringBuilder textSb = new StringBuilder();
-            for(int i = 0; i < text.Count; i++) {
-                if(text[i].TextHeight != height) {
-                    height = text[i].TextHeight;
-                    string line = textSb.ToString();
-                    if(line.Trim().Length > 0) {
-                        PdfTextLine textLine = new PdfTextLine(textSb.ToString(), lineN, false, false, text[i].FontSize, text[i].FontName);
-                        lines.Add(textLine);
-                    }
-                    textSb.Clear();
-                    foreach(var str in text[i].TextLines)
-                        textSb.Append(str);
-                    lineN++;
-                } else {
-                    foreach(var str in text[i].TextLines)
-                        textSb.Append(str);
-                }
-            }
-            string lastLine = textSb.ToString();
-            if(lastLine.Trim().Length > 0) {
-                PdfTextLine textLine = new PdfTextLine(textSb.ToString(), lineN, false, false, text[text.Count - 1].FontSize, text[text.Count - 1].FontName);
-                lines.Add(textLine);
-            }
-            textSb.Clear();
+            //var text = doc.PageTextData(0);
+            //int lineN = 0;
+            //double height = 0;
+            //List<PdfTextLine> lines = new List<PdfTextLine>();
+            //StringBuilder textSb = new StringBuilder();
+            //for(int i = 0; i < text.Count; i++) {
+            //    if(text[i].TextHeight != height) {
+            //        height = text[i].TextHeight;
+            //        string line = textSb.ToString();
+            //        if(line.Trim().Length > 0) {
+            //            PdfTextLine textLine = new PdfTextLine(textSb.ToString(), lineN, false, false, text[i].FontSize, text[i].FontName);
+            //            lines.Add(textLine);
+            //        }
+            //        textSb.Clear();
+            //        foreach(var str in text[i].TextLines)
+            //            textSb.Append(str);
+            //        lineN++;
+            //    } else {
+            //        foreach(var str in text[i].TextLines)
+            //            textSb.Append(str);
+            //    }
+            //}
+            //string lastLine = textSb.ToString();
+            //if(lastLine.Trim().Length > 0) {
+            //    PdfTextLine textLine = new PdfTextLine(textSb.ToString(), lineN, false, false, text[text.Count - 1].FontSize, text[text.Count - 1].FontName);
+            //    lines.Add(textLine);
+            //}
+            //textSb.Clear();
 
+            //foreach(var obj in lines) {
+            //    sb.Append(obj.text + "\n");
+            //}
+            //File.WriteAllText("testLine.txt", sb.ToString());
+
+            var lines = doc.PageTextLine(0);
             foreach(var obj in lines) {
+                if(obj.isOther)
+                    Console.WriteLine(obj.text);
                 sb.Append(obj.text + "\n");
+                
             }
-            File.WriteAllText("testLine.txt", sb.ToString());
-
+            File.WriteAllText("testMergeLine.txt", sb.ToString());
 
 
             //foreach(var obj in text) {
