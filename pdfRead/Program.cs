@@ -67,15 +67,16 @@ namespace pdfRead {
             //}
             //File.WriteAllText("testLine.txt", sb.ToString());
 
-            var lines = doc.PageTextLine(0);
-            foreach(var obj in lines) {
-                if(obj.isOther)
-                    Console.WriteLine(obj.text);
-                sb.Append(obj.text + "\n");
-                
-            }
-            File.WriteAllText("testMergeLine.txt", sb.ToString());
+            //var lines = doc.PageTextLine(0);
+            //foreach(var obj in lines) {
+            //    if(obj.isTitle)
+            //        Console.WriteLine(obj.text);
+            //    sb.Append(obj.text + "\n");
 
+            //}
+            //File.WriteAllText("testMergeLine.txt", sb.ToString());
+
+            List<PdfIndirectObject> imageObjectArray = doc.PageImageObject(0);
 
             //foreach(var obj in text) {
             //    Console.WriteLine(obj.TextHeight);

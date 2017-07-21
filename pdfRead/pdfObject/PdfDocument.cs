@@ -370,7 +370,6 @@ namespace pdfRead.pdfObject {
 
                 // contents can be reference or array of references or missing
                 PdfIndirectObject[] ContentsArray = GetArrayOfObjects(Page.ObjectValue.ToDictionary, "/Contents");
-
                 // blank page
                 if(ContentsArray == null)
                     continue;
@@ -893,7 +892,6 @@ namespace pdfRead.pdfObject {
             int position = 0;
             string test = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
             while(!String.IsNullOrEmpty(test.Trim())) {
-                Console.WriteLine(test);
                 test = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_BEGIN_Marked_Content, out position);
             }
        
@@ -961,8 +959,33 @@ namespace pdfRead.pdfObject {
                 PdfTextLine textLine = new PdfTextLine(textSb.ToString(), ++lineNum, false, bdcIndex[bdcIndex.Count - 1].Value, lastObject[lastObject.Count - 1].FontSize, lastObject[lastObject.Count - 1].FontName);
                 LineObjects.Add(textLine);
             }
-
+            int titleIndex = 0;
+            
+            while(titleIndex < LineObjects.Count) {
+                titleIndex++;
+                if(LineObjects[titleIndex].fontName != LineObjects[0].fontName || LineObjects[titleIndex].fontSize != LineObjects[0].fontSize)
+                    break;
+            }
+            if(titleIndex <= 3) {
+                int titleRange = titleIndex > LineObjects.Count ? LineObjects.Count : titleIndex;
+                for(int i = 0; i < titleRange; i++) {
+                    LineObjects[i].isTitle = true;
+                }
+            }
             return LineObjects;
+        }
+
+        public List<PdfIndirectObject> PageImageObject(int pageNum) {
+            List<PdfIndirectObject> ImageObjectArray = new List<PdfIndirectObject>();
+            PdfIndirectObject page = PageObjectArray[pageNum];
+            var test = page.ObjectValue.ToDictionary;
+            PdfIndirectObject[] ContentsArray = GetArrayOfObjects(page.ObjectValue.ToDictionary, "/Contents");
+            PdfIndirectObject[] ImageArray = GetArrayOfObjects(page.ObjectValue.ToDictionary, "/Image");
+            int position = 0;
+            string imageIndex = PdfFunctions.GetTextAttribute(page.PageContents, position, PdfConsts.PDF_IMAGE, out position).Trim();
+
+            Console.WriteLine(page.ObjectValue.ToString());
+            return ImageObjectArray;
         }
     }
 }

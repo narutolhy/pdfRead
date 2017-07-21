@@ -46,6 +46,8 @@ namespace pdfRead.pdfObject {
 
         public const string PDF_END_TEXT_BLOCK = "ET";
 
+        public const string PDF_IMAGE = "Do";
+
         public const string PDF_FLATE_DECODE = "Filter/FlateDecode";
 
         public const string PDF_STREAM_LENGTH = "/Length";
